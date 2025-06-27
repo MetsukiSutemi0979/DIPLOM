@@ -16,11 +16,11 @@ dependencies {
     testImplementation 'commons-dbutils:commons-dbutils:1.7'
     implementation 'com.codeborne:selenide:7.9.3'
     testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.3'
-    compileOnly("org.projectlombok:lombok:1.18.38")
-    annotationProcessor("org.projectlombok:lombok:1.18.38")
-    testCompileOnly("org.projectlombok:lombok:1.18.38")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
     testImplementation("commons-dbutils:commons-dbutils:1.7")
+    compileOnly"org.projectlombok:lombok:1.18.38"
+    annotationProcessor"org.projectlombok:lombok:1.18.38"
+    testCompileOnly"org.projectlombok:lombok:1.18.38"
+    testAnnotationProcessor"org.projectlombok:lombok:1.18.38"
 }
 
 test {

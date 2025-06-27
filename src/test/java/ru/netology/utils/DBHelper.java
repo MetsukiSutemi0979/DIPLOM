@@ -1,6 +1,7 @@
 package ru.netology.utils;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,15 +12,28 @@ public class DBHelper {
         return DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
     }
 
-    public static void execute(String sql, Object... params) throws SQLException {
+    public static String getPaymentStatus() throws SQLException {
+        var sql = "SELECT status FROM payment_entity ORDER BY created DESC LIMIT 1";
+        var runner = new QueryRunner();
         try (var conn = getConnection()) {
-            new QueryRunner().update(conn, sql, params);
+            return runner.query(conn, sql, new ScalarHandler<>());
+        }
+    }
+
+    public static String getCreditRequestStatus() throws SQLException {
+        var sql = "SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1";
+        var runner = new QueryRunner();
+        try (var conn = getConnection()) {
+            return runner.query(conn, sql, new ScalarHandler<>());
         }
     }
 
     public static void clearData() throws SQLException {
-        execute("DELETE FROM auth_codes;");
-        execute("DELETE FROM cards");
-        execute("DELETE FROM users;");
+        var runner = new QueryRunner();
+        try (var conn = getConnection()) {
+            runner.update(conn, "DELETE FROM payment_entity");
+            runner.update(conn, "DELETE FROM credit_request_entity");
+            runner.update(conn, "DELETE FROM order_entity");
+        }
     }
 }

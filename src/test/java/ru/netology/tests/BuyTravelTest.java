@@ -1,343 +1,249 @@
 package ru.netology.tests;
 
 import com.codeborne.selenide.Selenide;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import ru.netology.data.AuthInfo;
+import ru.netology.data.DataHelper;
 import ru.netology.pages.DashboardPage;
 import ru.netology.utils.DBHelper;
 
+import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class BuyTravelTest {
+    private DashboardPage dashboardPage;
+
     @BeforeEach
-    void setUp(){
+    void setUp() {
         Selenide.open("http://localhost:8080");
+        dashboardPage = new DashboardPage();
+    }
+
+    @AfterEach
+    void cleanDB() throws SQLException {
+        DBHelper.clearData();
     }
 
     @Test
-    void buyDebWithApprovedCard(){
-        var dashboardPage = new DashboardPage();
+    void buyDebWithApprovedCard() throws SQLException {
         dashboardPage.clickDebCard();
-        dashboardPage.fillFormApproved();
+        dashboardPage.fillForm(DataHelper.getApprovedCard());
         dashboardPage.checkSuccessNotification();
+        assertEquals("APPROVED", DBHelper.getPaymentStatus());
     }
 
     @Test
-    void buyCreditWithApprovedCard(){
-        var dashboardPage = new DashboardPage();
+    void buyCreditWithApprovedCard() throws SQLException {
         dashboardPage.clickCredit();
-        dashboardPage.fillFormApproved();
+        dashboardPage.fillForm(DataHelper.getApprovedCard());
         dashboardPage.checkSuccessNotification();
+        assertEquals("APPROVED", DBHelper.getCreditRequestStatus());
     }
 
     @Test
-    void buyDebWithBlockedCard(){
-        var dashboardPage = new DashboardPage();
+    void buyDebWithDeclinedCard() throws SQLException {
         dashboardPage.clickDebCard();
-        dashboardPage.fillFormBlocked();
+        dashboardPage.fillForm(DataHelper.getDeclinedCard());
+        dashboardPage.checkErrorNotification();
+        assertEquals("DECLINED", DBHelper.getPaymentStatus());
+    }
+
+    @Test
+    void buyCreditWithDeclinedCard() throws SQLException {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getDeclinedCard());
+        dashboardPage.checkErrorNotification();
+        assertEquals("DECLINED", DBHelper.getCreditRequestStatus());
+    }
+
+    @Test
+    void buyDebWithNonexistentCard() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getInvalidCard());
         dashboardPage.checkErrorNotification();
     }
 
     @Test
-    void buyCreditWithBlockedCard(){
-        var dashboardPage = new DashboardPage();
+    void buyCreditWithNonexistentCard() {
         dashboardPage.clickCredit();
-        dashboardPage.fillFormBlocked();
+        dashboardPage.fillForm(DataHelper.getInvalidCard());
         dashboardPage.checkErrorNotification();
     }
 
     @Test
-    void buyDebWithoutCardNumber(){
-        var dashboardPage = new DashboardPage();
+    void buyDebWithoutCardNumber() {
+        AuthInfo emptyCard = new AuthInfo("", "08", "27", "DANIL", "123");
         dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithoutNumber();
-    }
-
-    @Test
-    void buyDebWithoutMonth() {
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithoutMonth();
-    }
-
-    @Test
-    void buyDebWithoutYear() {
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithoutYear();
-    }
-
-    @Test
-    void buyDebWithoutName() {
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithoutName();
-    }
-
-    @Test
-    void buyDebWithoutCode() {
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithoutCode();
+        dashboardPage.fillForm(emptyCard);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
     }
 
     @Test
     void buyCreditWithoutCardNumber() {
-        var dashboardPage = new DashboardPage();
+        AuthInfo emptyCard = new AuthInfo("", "08", "27", "DANIL", "123");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithoutNumber();
+        dashboardPage.fillForm(emptyCard);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void buyDebWithoutMonth() {
+        AuthInfo emptyMonth = new AuthInfo("4444 4444 4444 4441", "", "27", "DANIL", "123");
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(emptyMonth);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
     }
 
     @Test
     void buyCreditWithoutMonth() {
-        var dashboardPage = new DashboardPage();
+        AuthInfo emptyMonth = new AuthInfo("4444 4444 4444 4441", "", "27", "DANIL", "123");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithoutMonth();
+        dashboardPage.fillForm(emptyMonth);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void buyDebWithoutYear() {
+        AuthInfo emptyYear = new AuthInfo("4444 4444 4444 4441", "08", "", "DANIL", "123");
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(emptyYear);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
     }
 
     @Test
     void buyCreditWithoutYear() {
-        var dashboardPage = new DashboardPage();
+        AuthInfo emptyYear = new AuthInfo("4444 4444 4444 4441", "08", "", "DANIL", "123");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithoutYear();
+        dashboardPage.fillForm(emptyYear);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void buyDebWithoutName() {
+        AuthInfo emptyName = new AuthInfo("4444 4444 4444 4441", "08", "27", "", "123");
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(emptyName);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
     }
 
     @Test
     void buyCreditWithoutName() {
-        var dashboardPage = new DashboardPage();
+        AuthInfo emptyName = new AuthInfo("4444 4444 4444 4441", "08", "27", "", "123");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithoutName();
+        dashboardPage.fillForm(emptyName);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void buyDebWithoutCode() {
+        AuthInfo emptyCode = new AuthInfo("4444 4444 4444 4441", "08", "27", "DANIL", "");
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(emptyCode);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
     }
 
     @Test
     void buyCreditWithoutCode() {
-        var dashboardPage = new DashboardPage();
+        AuthInfo emptyCode = new AuthInfo("4444 4444 4444 4441", "08", "27", "DANIL", "");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithoutCode();
+        dashboardPage.fillForm(emptyCode);
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
     }
 
     @Test
-    void buyDebWithNonexistentCard(){
-        var dashboardPage = new DashboardPage();
+    void buyDebWithInvalidMonth() {
+        AuthInfo invalidMonth = new AuthInfo("4444 4444 4444 4441", "13", "27", "DANIL", "123");
         dashboardPage.clickDebCard();
-        dashboardPage.fillFormNullCard();
-        dashboardPage.checkErrorNotification();
+        dashboardPage.fillForm(invalidMonth);
+        dashboardPage.checkValidationMessage("Неверно указан срок действия карты");
     }
 
     @Test
-    void buyCreditWithNonexistentCard(){
-        var dashboardPage = new DashboardPage();
+    void buyCreditWithInvalidMonth() {
+        AuthInfo invalidMonth = new AuthInfo("4444 4444 4444 4441", "13", "27", "DANIL", "123");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormNullCard();
-        dashboardPage.checkErrorNotification();
+        dashboardPage.fillForm(invalidMonth);
+        dashboardPage.checkValidationMessage("Неверно указан срок действия карты");
     }
 
     @Test
-    void buyDebWithLimitValuesNumber(){
-        var dashboardPage = new DashboardPage();
+    void buyDebWithExpiredYear() {
+        AuthInfo expiredYear = new AuthInfo("4444 4444 4444 4441", "08", DataHelper.getPreviousYear(), "DANIL", "123");
         dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecNumber1();
+        dashboardPage.fillForm(expiredYear);
+        dashboardPage.checkValidationMessage("Истёк срок действия карты");
     }
 
     @Test
-    void buyCreditWithLimitValuesNumber(){
-        var dashboardPage = new DashboardPage();
+    void buyCreditWithExpiredYear() {
+        AuthInfo expiredYear = new AuthInfo("4444 4444 4444 4441", "08", DataHelper.getPreviousYear(), "DANIL", "123");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecNumber1();
+        dashboardPage.fillForm(expiredYear);
+        dashboardPage.checkValidationMessage("Истёк срок действия карты");
     }
 
     @Test
-    void buyDebWithLimitValuesMonth(){
-        var dashboardPage = new DashboardPage();
+    void buyDebWithCyrillicName() {
+        AuthInfo cyrillicName = new AuthInfo("4444 4444 4444 4441", "08", "27", "ДАНИЛ", "123");
         dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecMonth1();
+        dashboardPage.fillForm(cyrillicName);
+        dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyCreditWithLimitValuesMonth(){
-        var dashboardPage = new DashboardPage();
+    void buyCreditWithCyrillicName() {
+        AuthInfo cyrillicName = new AuthInfo("4444 4444 4444 4441", "08", "27", "ДАНИЛ", "123");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecMonth1();
+        dashboardPage.fillForm(cyrillicName);
+        dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyDebWithLimitValuesYear(){
-        var dashboardPage = new DashboardPage();
+    void buyDebWithNumericName() {
+        AuthInfo numericName = new AuthInfo("4444 4444 4444 4441", "08", "27", "12345", "123");
         dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecYear1();
+        dashboardPage.fillForm(numericName);
+        dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyCreditWithLimitValuesYear(){
-        var dashboardPage = new DashboardPage();
+    void buyCreditWithNumericName() {
+        AuthInfo numericName = new AuthInfo("4444 4444 4444 4441", "08", "27", "12345", "123");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecYear1();
+        dashboardPage.fillForm(numericName);
+        dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyDebWithRussianName(){
-        var dashboardPage = new DashboardPage();
+    void buyDebWithLongCvc() {
+        AuthInfo longCvc = new AuthInfo("4444 4444 4444 4441", "08", "27", "DANIL", "1234");
         dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecName1();
+        dashboardPage.fillForm(longCvc);
+        dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyCreditWithRussianName(){
-        var dashboardPage = new DashboardPage();
+    void buyCreditWithLongCvc() {
+        AuthInfo longCvc = new AuthInfo("4444 4444 4444 4441", "08", "27", "DANIL", "1234");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecName1();
+        dashboardPage.fillForm(longCvc);
+        dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyDebWithLimitValuesCode(){
-        var dashboardPage = new DashboardPage();
+    void buyDebWithInvalidCardFormat() {
+        AuthInfo invalidCard = new AuthInfo("4444 4444 4444 444", "08", "27", "DANIL", "123");
         dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecCode1();
+        dashboardPage.fillForm(invalidCard);
+        dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyCreditWithLimitValuesCode(){
-        var dashboardPage = new DashboardPage();
+    void buyCreditWithInvalidCardFormat() {
+        AuthInfo invalidCard = new AuthInfo("4444 4444 4444 444", "08", "27", "DANIL", "123");
         dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecCode1();
+        dashboardPage.fillForm(invalidCard);
+        dashboardPage.checkValidationMessage("Неверный формат");
     }
-
-    @Test
-    void buyDebWithWordsInNumber(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecNumber2();
-    }
-
-    @Test
-    void buyCreditWithWordsInNumber(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecNumber2();
-    }
-
-    @Test
-    void buyDebWithWordsInMonth(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecMonth2();
-    }
-
-    @Test
-    void buyCreditWithWordsInMonth(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecMonth2();
-    }
-
-    @Test
-    void buyDebWithWordsInYear(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecYear2();
-    }
-
-    @Test
-    void buyCreditWithWordsInYear(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecYear2();
-    }
-
-    @Test
-    void buyDebWithNumbersInName(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecName2();
-    }
-
-    @Test
-    void buyCreditWithNumbersInName(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecName2();
-    }
-
-    @Test
-    void buyDebWithWordsInCode(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecCode2();
-    }
-
-    @Test
-    void buyCreditWithWordsInCode(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecCode2();
-    }
-
-    @Test
-    void buyDebWithSpecSymbolsInNumber(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecNumber3();
-    }
-
-    @Test
-    void buyCreditWithSpecSymbolsInNumber(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecNumber3();
-    }
-
-    @Test
-    void buyDebWithSpecSymbolsInMonth(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecMonth3();
-    }
-
-    @Test
-    void buyCreditWithSpecSymbolsInMonth(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecMonth3();
-    }
-
-    @Test
-    void buyDebWithWithSpecSymbolsYear(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecYear3();
-    }
-
-    @Test
-    void buyCreditWithSpecSymbolsInYear(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecYear3();
-    }
-
-    @Test
-    void buyDebWithSpecSymbolsInName(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecName3();
-    }
-
-    @Test
-    void buyCreditWithSpecSymbolsInName(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecName3();
-    }
-
-    @Test
-    void buyDebWithSpecSymbolsInCode(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickDebCard();
-        dashboardPage.fillFormWithSpecCode3();
-    }
-
-    @Test
-    void buyCreditWithSpecSymbolsInCode(){
-        var dashboardPage = new DashboardPage();
-        dashboardPage.clickCredit();
-        dashboardPage.fillFormWithSpecCode3();
-    }
-
 }

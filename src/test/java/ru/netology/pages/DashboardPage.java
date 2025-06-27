@@ -2,6 +2,7 @@ package ru.netology.pages;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import ru.netology.data.AuthInfo;
 
 import java.time.Duration;
 
@@ -18,265 +19,30 @@ public class DashboardPage {
     private SelenideElement name = $$("span.input__top").findBy(text("Владелец")).parent().$("input");
     private SelenideElement code = $(".input__control[placeholder='999']");
     private SelenideElement succesNotification = $(".notification_status_ok");
-    private SelenideElement errorNotification = $(".notification_status_error") ;
+    private SelenideElement errorNotification = $(".notification_status_error");
     private SelenideElement submitButton = $("form button.button");
+    private SelenideElement validationMessage = $(".input__sub");
 
-    public DashboardPage clickDebCard(){
+    public void clickDebCard() {
         buttonDebCard.click();
-        return new DashboardPage();
     }
 
-    public DashboardPage clickCredit(){
+    public void clickCredit() {
         buttonCredit.click();
-        return new DashboardPage();
     }
 
-    public DashboardPage fillFormApproved(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
+    public void fillForm(AuthInfo authInfo) {
+        cardNumber.setValue(authInfo.getNumber());
+        month.setValue(authInfo.getMonth());
+        year.setValue(authInfo.getYear());
+        name.setValue(authInfo.getName());
+        code.setValue(authInfo.getCode());
         submitButton.click();
-        return new DashboardPage();
     }
 
-    public DashboardPage fillFormBlocked(){
-        cardNumber.setValue("4444 4444 4444 4442");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        return new DashboardPage();
+    public void checkValidationMessage(String expectedText) {
+        validationMessage.shouldHave(Condition.exactText(expectedText));
     }
-
-    public DashboardPage fillFormNullCard(){
-        cardNumber.setValue("4444 4444 4444 4443");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithoutNumber() {
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithoutMonth() {
-        cardNumber.setValue("4444 4444 4444 4441");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithoutYear() {
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithoutName() {
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("27");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithoutCode() {
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecNumber1(){
-        cardNumber.setValue("4444 4444 4444 44451");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecMonth1(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("13");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверно указан срок действия карты"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecYear1(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("24");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверно указан срок действия карты"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecName1(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("ДАНИЛ");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecCode1(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("1000");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecNumber2(){
-        cardNumber.setValue("Карточка");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecMonth2(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("Май");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecYear2(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("четыре");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecName2(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("12345");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecCode2(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("Триста");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecNumber3(){
-        cardNumber.setValue("!@");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecMonth3(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("!@");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecYear3(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("!@");
-        name.setValue("DANIL");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecName3(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("!@");
-        code.setValue("123");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-    public DashboardPage fillFormWithSpecCode3(){
-        cardNumber.setValue("4444 4444 4444 4441");
-        month.setValue("08");
-        year.setValue("27");
-        name.setValue("DANIL");
-        code.setValue("!@");
-        submitButton.click();
-        $(".input__sub").shouldHave(exactText("Неверный формат"));
-        return new DashboardPage();
-    }
-
-
 
     public void checkSuccessNotification() {
         succesNotification.shouldBe(visible, Duration.ofSeconds(15));
