@@ -2,14 +2,16 @@ package ru.netology.utils;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBHelper {
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
+        String url = System.getProperty("db.url");
+        String user = System.getProperty("db.user", "app");
+        String password = System.getProperty("db.password", "pass");
+        return DriverManager.getConnection(url, user, password);
     }
 
     public static String getPaymentStatus() throws SQLException {
