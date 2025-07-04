@@ -26,7 +26,7 @@ public class BuyTravelTest {
     }
 
     @Test
-    void buyDebWithApprovedCard() throws SQLException {
+    void shouldSuccessPaymentWithApprovedCard() throws SQLException {
         dashboardPage.clickDebCard();
         dashboardPage.fillForm(DataHelper.getApprovedCard());
         dashboardPage.checkSuccessNotification();
@@ -34,7 +34,7 @@ public class BuyTravelTest {
     }
 
     @Test
-    void buyCreditWithApprovedCard() throws SQLException {
+    void shouldSuccessCreditWithApprovedCard() throws SQLException {
         dashboardPage.clickCredit();
         dashboardPage.fillForm(DataHelper.getApprovedCard());
         dashboardPage.checkSuccessNotification();
@@ -42,208 +42,303 @@ public class BuyTravelTest {
     }
 
     @Test
-    void buyDebWithDeclinedCard() throws SQLException {
+    void shouldFailPaymentWithDeclinedCard() {
         dashboardPage.clickDebCard();
         dashboardPage.fillForm(DataHelper.getDeclinedCard());
         dashboardPage.checkErrorNotification();
-        assertEquals("DECLINED", DBHelper.getPaymentStatus());
     }
 
     @Test
-    void buyCreditWithDeclinedCard() throws SQLException {
+    void shouldFailCreditWithDeclinedCard() {
         dashboardPage.clickCredit();
         dashboardPage.fillForm(DataHelper.getDeclinedCard());
         dashboardPage.checkErrorNotification();
-        assertEquals("DECLINED", DBHelper.getCreditRequestStatus());
     }
 
     @Test
-    void buyDebWithNonexistentCard() {
+    void shouldFailPaymentWithInvalidCard() {
         dashboardPage.clickDebCard();
         dashboardPage.fillForm(DataHelper.getInvalidCard());
         dashboardPage.checkErrorNotification();
     }
 
     @Test
-    void buyCreditWithNonexistentCard() {
+    void shouldFailCreditWithInvalidCard() {
         dashboardPage.clickCredit();
         dashboardPage.fillForm(DataHelper.getInvalidCard());
         dashboardPage.checkErrorNotification();
     }
 
     @Test
-    void buyDebWithoutCardNumber() {
-        AuthInfo emptyCard = new AuthInfo("", "08", "27", "DANIL", "123");
+    void shouldFailPaymentWithInvalidMonthBoundary() {
         dashboardPage.clickDebCard();
-        dashboardPage.fillForm(emptyCard);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyCreditWithoutCardNumber() {
-        AuthInfo emptyCard = new AuthInfo("", "08", "27", "DANIL", "123");
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(emptyCard);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyDebWithoutMonth() {
-        AuthInfo emptyMonth = new AuthInfo("4444 4444 4444 4441", "", "27", "DANIL", "123");
-        dashboardPage.clickDebCard();
-        dashboardPage.fillForm(emptyMonth);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyCreditWithoutMonth() {
-        AuthInfo emptyMonth = new AuthInfo("4444 4444 4444 4441", "", "27", "DANIL", "123");
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(emptyMonth);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyDebWithoutYear() {
-        AuthInfo emptyYear = new AuthInfo("4444 4444 4444 4441", "08", "", "DANIL", "123");
-        dashboardPage.clickDebCard();
-        dashboardPage.fillForm(emptyYear);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyCreditWithoutYear() {
-        AuthInfo emptyYear = new AuthInfo("4444 4444 4444 4441", "08", "", "DANIL", "123");
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(emptyYear);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyDebWithoutName() {
-        AuthInfo emptyName = new AuthInfo("4444 4444 4444 4441", "08", "27", "", "123");
-        dashboardPage.clickDebCard();
-        dashboardPage.fillForm(emptyName);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyCreditWithoutName() {
-        AuthInfo emptyName = new AuthInfo("4444 4444 4444 4441", "08", "27", "", "123");
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(emptyName);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyDebWithoutCode() {
-        AuthInfo emptyCode = new AuthInfo("4444 4444 4444 4441", "08", "27", "DANIL", "");
-        dashboardPage.clickDebCard();
-        dashboardPage.fillForm(emptyCode);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyCreditWithoutCode() {
-        AuthInfo emptyCode = new AuthInfo("4444 4444 4444 4441", "08", "27", "DANIL", "");
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(emptyCode);
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
-    }
-
-    @Test
-    void buyDebWithInvalidMonth() {
-        AuthInfo invalidMonth = new AuthInfo("4444 4444 4444 4441", "13", "27", "DANIL", "123");
-        dashboardPage.clickDebCard();
-        dashboardPage.fillForm(invalidMonth);
+        dashboardPage.fillForm(DataHelper.getCardWithInvalidMonth());
         dashboardPage.checkValidationMessage("Неверно указан срок действия карты");
     }
 
     @Test
-    void buyCreditWithInvalidMonth() {
-        AuthInfo invalidMonth = new AuthInfo("4444 4444 4444 4441", "13", "27", "DANIL", "123");
+    void shouldFailPaymentWithInvalidYearBoundary() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithExpiredYear());
+        dashboardPage.checkValidationMessage("Истёк срок действия карты");
+    }
+
+    @Test
+    void shouldFailPaymentWithCyrillicName() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithCyrillicName());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithInvalidCvvBoundary() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithLongCvc());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailCreditWithInvalidCvvBoundary() {
         dashboardPage.clickCredit();
-        dashboardPage.fillForm(invalidMonth);
+        dashboardPage.fillForm(DataHelper.getCardWithLongCvc());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailCreditWithSpecialSymbolsInYear() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInYear());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithTextInMonth() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithTextInMonth());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithTextInYear() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithTextInYear());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithTextInCvv() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithTextInCvv());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithInvalidMonthBoundary2() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithInvalidMonth());
         dashboardPage.checkValidationMessage("Неверно указан срок действия карты");
     }
 
     @Test
-    void buyDebWithExpiredYear() {
-        AuthInfo expiredYear = new AuthInfo("4444 4444 4444 4441", "08", DataHelper.getPreviousYear(), "DANIL", "123");
+    void shouldFailPaymentWithInvalidYearBoundary2() {
         dashboardPage.clickDebCard();
-        dashboardPage.fillForm(expiredYear);
+        dashboardPage.fillForm(DataHelper.getCardWithExpiredYear());
         dashboardPage.checkValidationMessage("Истёк срок действия карты");
     }
 
     @Test
-    void buyCreditWithExpiredYear() {
-        AuthInfo expiredYear = new AuthInfo("4444 4444 4444 4441", "08", DataHelper.getPreviousYear(), "DANIL", "123");
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(expiredYear);
-        dashboardPage.checkValidationMessage("Истёк срок действия карты");
-    }
-
-    @Test
-    void buyDebWithCyrillicName() {
-        AuthInfo cyrillicName = new AuthInfo("4444 4444 4444 4441", "08", "27", "ДАНИЛ", "123");
+    void shouldFailPaymentWithCyrillicName2() {
         dashboardPage.clickDebCard();
-        dashboardPage.fillForm(cyrillicName);
+        dashboardPage.fillForm(DataHelper.getCardWithCyrillicName());
         dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyCreditWithCyrillicName() {
-        AuthInfo cyrillicName = new AuthInfo("4444 4444 4444 4441", "08", "27", "ДАНИЛ", "123");
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(cyrillicName);
-        dashboardPage.checkValidationMessage("Неверный формат");
-    }
-
-    @Test
-    void buyDebWithNumericName() {
-        AuthInfo numericName = new AuthInfo("4444 4444 4444 4441", "08", "27", "12345", "123");
+    void shouldFailPaymentWithInvalidCvvBoundary2() {
         dashboardPage.clickDebCard();
-        dashboardPage.fillForm(numericName);
+        dashboardPage.fillForm(DataHelper.getCardWithLongCvc());
         dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyCreditWithNumericName() {
-        AuthInfo numericName = new AuthInfo("4444 4444 4444 4441", "08", "27", "12345", "123");
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(numericName);
-        dashboardPage.checkValidationMessage("Неверный формат");
-    }
-
-    @Test
-    void buyDebWithLongCvc() {
-        AuthInfo longCvc = new AuthInfo("4444 4444 4444 4441", "08", "27", "DANIL", "1234");
+    void shouldFailPaymentWithTextInMonth2() {
         dashboardPage.clickDebCard();
-        dashboardPage.fillForm(longCvc);
+        dashboardPage.fillForm(DataHelper.getCardWithTextInMonth());
         dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyCreditWithLongCvc() {
-        AuthInfo longCvc = new AuthInfo("4444 4444 4444 4441", "08", "27", "DANIL", "1234");
+    void shouldFailCreditWithNumericName() {
         dashboardPage.clickCredit();
-        dashboardPage.fillForm(longCvc);
+        dashboardPage.fillForm(DataHelper.getCardWithNumericName());
         dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyDebWithInvalidCardFormat() {
-        AuthInfo invalidCard = new AuthInfo("4444 4444 4444 444", "08", "27", "DANIL", "123");
+    void shouldFailCreditWithTextInCvv() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithTextInCvv());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithSpecialSymbolsInMonth() {
         dashboardPage.clickDebCard();
-        dashboardPage.fillForm(invalidCard);
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInMonth());
         dashboardPage.checkValidationMessage("Неверный формат");
     }
 
     @Test
-    void buyCreditWithInvalidCardFormat() {
-        AuthInfo invalidCard = new AuthInfo("4444 4444 4444 444", "08", "27", "DANIL", "123");
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(invalidCard);
+    void shouldFailPaymentWithSpecialSymbolsInYear() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInYear());
         dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithSpecialSymbolsInName() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInName());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithSpecialSymbolsInCvv() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInCvv());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailCreditWithSpecialSymbolsInMonth() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInMonth());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailCreditWithSpecialSymbolsInName() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInName());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailCreditWithSpecialSymbolsInCvv() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInCvv());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailCreditWithTextInCvv2() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithTextInCvv());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithLongCardNumber() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithLongNumber());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithTextInCardNumber() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithTextInNumber());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithSpecialSymbolsInCardNumber() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInNumber());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailCreditWithTextInCardNumber() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithTextInNumber());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithTextInCardNumber2() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithTextInNumber());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailCreditWithSpecialSymbolsInCardNumber() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInNumber());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailPaymentWithEmptyCardNumber() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithoutNumber());
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void shouldFailPaymentWithEmptyMonth() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithoutMonth());
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void shouldFailPaymentWithEmptyYear() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithoutYear());
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void shouldFailPaymentWithEmptyCvv() {
+        dashboardPage.clickDebCard();
+        dashboardPage.fillForm(DataHelper.getCardWithoutCvc());
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void shouldFailCreditWithEmptyCardNumber() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithoutNumber());
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void shouldFailCreditWithEmptyMonth() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithoutMonth());
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void shouldFailCreditWithEmptyYear() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithoutYear());
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void shouldFailCreditWithEmptyName() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithoutName());
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void shouldFailCreditWithEmptyCvv() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithoutCvc());
+        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
     }
 }

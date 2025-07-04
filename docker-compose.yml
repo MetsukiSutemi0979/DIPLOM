@@ -2,6 +2,7 @@ version: '3.8'
 services:
   mysql-db:
     image: mysql:8.0
+    container_name: mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: app
@@ -9,21 +10,33 @@ services:
       MYSQL_PASSWORD: pass
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   postgresdb:
     image: postgres:13
+    container_name: postgresdb
     environment:
       POSTGRES_DB: app
       POSTGRES_USER: app
       POSTGRES_PASSWORD: pass
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   gate-simulator:
     image: node:18
+    container_name: gate-simulator
     working_dir: /app
     volumes:
       - ./gate-simulator:/app
     ports:
       - "9999:9999"
-    command: npm start
+    command: sh -c "npm install && npm start"

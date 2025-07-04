@@ -41,6 +41,7 @@ public class DashboardPage {
     }
 
     public void checkValidationMessage(String expectedText) {
+        validationMessage.shouldBe(Condition.visible);
         validationMessage.shouldHave(Condition.exactText(expectedText));
     }
 
