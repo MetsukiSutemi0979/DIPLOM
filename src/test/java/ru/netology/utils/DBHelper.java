@@ -8,7 +8,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBHelper {
-    // Универсальный метод подключения к БД
     public static Connection getConnection() throws SQLException {
         String url = System.getProperty("db.url");
         String user = System.getProperty("db.user");
@@ -17,7 +16,6 @@ public class DBHelper {
         return DriverManager.getConnection(url, user, password);
     }
 
-    // Получение статуса платежа
     public static String getPaymentStatus() {
         String sql = "SELECT status FROM payment_entity ORDER BY created DESC LIMIT 1";
         QueryRunner runner = new QueryRunner();
@@ -29,7 +27,6 @@ public class DBHelper {
         }
     }
 
-    // Получение статуса кредитной заявки
     public static String getCreditRequestStatus() {
         String sql = "SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1";
         QueryRunner runner = new QueryRunner();
@@ -41,7 +38,6 @@ public class DBHelper {
         }
     }
 
-    // Очистка данных
     public static void clearData() {
         QueryRunner runner = new QueryRunner();
         try (Connection conn = getConnection()) {

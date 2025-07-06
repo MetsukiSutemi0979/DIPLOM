@@ -398,6 +398,4 @@ public class DataHelper {
                 getValidCvc()
         );
     }
-
-
 }

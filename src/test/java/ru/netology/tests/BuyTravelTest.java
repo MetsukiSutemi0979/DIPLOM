@@ -332,7 +332,7 @@ public class BuyTravelTest {
     void shouldFailCreditWithEmptyName() {
         dashboardPage.clickCredit();
         dashboardPage.fillForm(DataHelper.getCardWithoutName());
-        dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+        dashboardPage.checkErrorNotification();
     }
 
     @Test

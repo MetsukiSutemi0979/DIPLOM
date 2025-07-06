@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Value;
 
-@Getter
-@Setter
 @Value
 public class AuthInfo {
     String number;
