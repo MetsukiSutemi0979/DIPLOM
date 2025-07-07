@@ -1,6 +1,8 @@
 package ru.netology.tests;
 
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import ru.netology.data.AuthInfo;
 import ru.netology.data.DataHelper;
@@ -13,6 +15,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BuyTravelTest {
     private DashboardPage dashboardPage;
+
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
 
     @BeforeEach
     void setUp() {
