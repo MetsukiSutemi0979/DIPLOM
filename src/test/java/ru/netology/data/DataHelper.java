@@ -398,4 +398,24 @@ public class DataHelper {
                 getValidCvc()
         );
     }
+
+    public static AuthInfo getCardWithNonExistentMonth() {
+        return  new AuthInfo(
+                getApprovedCardNumber(),
+                "34",
+                getNextYear(),
+                getValidName(),
+                getValidCvc()
+        );
+    }
+
+    public static AuthInfo getCardWithLastYear() {
+        return  new AuthInfo(
+                getApprovedCardNumber(),
+                getCurrentMonth(),
+                "24",
+                getValidName(),
+                getValidCvc()
+        );
+    }
 }

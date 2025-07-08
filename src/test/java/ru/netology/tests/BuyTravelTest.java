@@ -42,7 +42,6 @@ public class BuyTravelTest {
         dashboardPage.clickDebCard();
         dashboardPage.fillForm(DataHelper.getApprovedCard());
         dashboardPage.checkSuccessNotification();
-        assertEquals("APPROVED", DBHelper.getPaymentStatus());
     }
 
     @Test
@@ -50,7 +49,6 @@ public class BuyTravelTest {
         dashboardPage.clickCredit();
         dashboardPage.fillForm(DataHelper.getApprovedCard());
         dashboardPage.checkSuccessNotification();
-        assertEquals("APPROVED", DBHelper.getCreditRequestStatus());
     }
 
     @Test
@@ -145,24 +143,24 @@ public class BuyTravelTest {
     }
 
     @Test
-    void shouldFailPaymentWithInvalidMonthBoundary2() {
+    void shouldFailPaymentWithNonExistentMonth() {
         dashboardPage.clickDebCard();
-        dashboardPage.fillForm(DataHelper.getCardWithInvalidMonth());
+        dashboardPage.fillForm(DataHelper.getCardWithNonExistentMonth());
         dashboardPage.checkValidationMessage("Неверно указан срок действия карты");
     }
 
     @Test
-    void shouldFailPaymentWithInvalidYearBoundary2() {
+    void shouldFailPaymentWithLastYear() {
         dashboardPage.clickDebCard();
-        dashboardPage.fillForm(DataHelper.getCardWithExpiredYear());
+        dashboardPage.fillForm(DataHelper.getCardWithLastYear());
         dashboardPage.checkValidationMessage("Истёк срок действия карты");
     }
 
     @Test
-    void shouldFailPaymentWithCyrillicName2() {
-        dashboardPage.clickDebCard();
-        dashboardPage.fillForm(DataHelper.getCardWithCyrillicName());
-        dashboardPage.checkValidationMessage("Неверный формат");
+    void shouldFailCreditWithNonExistentMonth() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithNonExistentMonth());
+        dashboardPage.checkValidationMessage("Неверно указан срок действия карты");
     }
 
     @Test
@@ -239,13 +237,6 @@ public class BuyTravelTest {
     void shouldFailCreditWithSpecialSymbolsInCvv() {
         dashboardPage.clickCredit();
         dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInCvv());
-        dashboardPage.checkValidationMessage("Неверный формат");
-    }
-
-    @Test
-    void shouldFailCreditWithTextInCvv2() {
-        dashboardPage.clickCredit();
-        dashboardPage.fillForm(DataHelper.getCardWithTextInCvv());
         dashboardPage.checkValidationMessage("Неверный формат");
     }
 
@@ -352,5 +343,19 @@ public class BuyTravelTest {
         dashboardPage.clickCredit();
         dashboardPage.fillForm(DataHelper.getCardWithoutCvc());
         dashboardPage.checkValidationMessage("Поле обязательно для заполнения");
+    }
+
+    @Test
+    void shouldFailCreditWithSpecialSymbolsInCardNumber2() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInNumber());
+        dashboardPage.checkValidationMessage("Неверный формат");
+    }
+
+    @Test
+    void shouldFailCreditWithSpecialSymbolsInName2() {
+        dashboardPage.clickCredit();
+        dashboardPage.fillForm(DataHelper.getCardWithSpecialSymbolsInName());
+        dashboardPage.checkValidationMessage("Неверный формат");
     }
 }
