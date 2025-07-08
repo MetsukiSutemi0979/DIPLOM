@@ -13,6 +13,9 @@ public class DBHelper {
         String user = System.getProperty("db.user");
         String password = System.getProperty("db.password");
 
+        if (url.startsWith("jdbc:postgresql:")) {
+            return DriverManager.getConnection(url + "?user=" + user + "&password=" + password);
+        }
         return DriverManager.getConnection(url, user, password);
     }
 

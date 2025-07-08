@@ -46,7 +46,6 @@ public class DashboardPage {
     }
 
     public void checkSuccessNotification() {
-        succesNotification.shouldBe(visible, Duration.ofSeconds(15));
         succesNotification.shouldHave(text("Успешно"));
         succesNotification.shouldHave(text("Операция одобрена Банком."));
     }
